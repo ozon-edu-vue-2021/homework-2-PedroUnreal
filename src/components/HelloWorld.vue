@@ -76,23 +76,23 @@ let json = {
 				]	
 }
         
-json = JSON.stringify(json);
-json = JSON.parse(json)
+// json = JSON.stringify(json);
+// json = JSON.parse(json)
 
 console.log(json);
 let counter = 0;
-let a = "___"
+let a = "___";
+
 function printFile(obj) {
-  console.log(a.repeat(counter) + obj.name, counter)
-if (obj.contents === undefined){
-  
-  return
-} else {
-  counter++
-let children = [...obj.contents]  //array
-children.forEach((obj)=>printFile(obj))
-counter--
-}
+  console.log(a.repeat(counter) + obj.name, counter);
+
+  if (!Array.isArray(obj.contents)) {
+    return;
+  }
+
+  counter++;
+  obj.contents.forEach((child) => printFile(child));
+  counter--;
 }
 
 printFile(json)
