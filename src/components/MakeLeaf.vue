@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ space }}+{{ leafNames }}</p>
+    <p>{{ space + leafName }}</p>
   </div>
 </template>
 
@@ -13,11 +13,13 @@ export default {
     },
     leafName: {
       type: String,
+      default: ''
     }
   },
   computed: {
-    space: "__".repeat(this.counter),
+    space() { 
+      return "__".repeat(this.counter) 
+    },
   },
 };
-
-console.log(this.leafNames);
+</script>

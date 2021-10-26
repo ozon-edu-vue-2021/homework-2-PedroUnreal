@@ -1,23 +1,29 @@
 <template>
   <div class="tree">
-    <p>{{ tree }}</p>
     <button v-on:click="BuildTree">Построить дерево</button>
+    <!-- <MakeLeaf v-bind:counter="counter" v-bind:leafName="obj.name"/> -->
+    <ul>
+      <li v-for="(item, index) in tree" v-bind:key="index">
+        <MakeLeaf v-bind:leafName="item.name" v-bind:counter="item.counter"></MakeLeaf>
+      </li>
+    </ul> 
   </div>
 </template>
 
 <script>
 import MakeLeaf from "@/components/MakeLeaf.vue";
+
 export default {
   name: "BuildTree",
-//   components: {
-//     MakeLeaf
-//   },
+  components: {
+    MakeLeaf,
+  },
   props: {
     msg: String,
   },
   data() {
     return {
-      tree: "Дерево",
+      tree: [],
       counter: 0,
       json: {
         type: "directory",
@@ -65,22 +71,31 @@ export default {
   },
   methods: {
     BuildTree() {
-      let json = this.json;
+      const self = this;
+
       function printFile(obj) {
-        //console.log(obj.name);
-        <MakeLeaf v-bind:counter="counter" v-bind:leafName="obj.name">
-          {" "}
-        </MakeLeaf>; //(a.repeat(counter) + obj.name, counter)
-        if (!Array.isArray(obj.contents /*|| obj.contents.length < 1*/)) {
+        // <MakeLeaf v-bind:counter="counter" v-bind:leafName="obj.name">
+        //   {" "}
+        // </MakeLeaf>;
+        self.tree.push({ 
+          name: obj.name, 
+          counter: self.counter 
+        });
+
+        if (!Array.isArray(obj.contents) || obj.contents.length < 1) {
           return;
         }
 
-        //this.counter++;
+        console.log(self.tree, 'tree 2');
+
+        self.counter++;
+
         obj.contents.forEach((child) => printFile(child));
-        //this.counter--;
+
+        self.counter--;
       }
 
-      printFile(json);
+      printFile(this.json);
     },
   },
 };
@@ -99,7 +114,7 @@ ul {
   padding: 0;
 }
 li {
-  display: inline-block;
+  display: block;
   margin: 0 10px;
 }
 a {
