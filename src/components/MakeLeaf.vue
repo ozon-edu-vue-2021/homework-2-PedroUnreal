@@ -1,24 +1,35 @@
 <template>
-  <div>
-    <p>{{ space + leafName }}</p>
+  <div class="tree-menu">
+    <div :style="indent" v-on:click="toggleChildren" v-bind:class="[isDir ? activeClass : '']">
+      {{ name }}
+    </div>
+    <MakeLeaf
+      v-if="showChildren"
+      v-for="content in contents"
+      :contents="content.contents"
+      :name="content.name"
+      :key="content.name"
+      :depth="depth + 1"
+      :type="content.type"
+    >
+    </MakeLeaf>
   </div>
 </template>
-
 <script>
 export default {
+  props: ["name", "contents", "depth", "type"],
   name: "MakeLeaf",
-  props: {
-    counter: {
-      type: Number,
-    },
-    leafName: {
-      type: String,
-      default: ''
-    }
-  },
   computed: {
-    space() { 
-      return "__".repeat(this.counter) 
+    indent() {
+      return { transform: `translate(${this.depth * 50}px)` };
+    },
+    },
+  data() {
+    return { showChildren: false, isDir: this.type === "directory" }    
+  },
+  methods: {
+    toggleChildren() {
+      this.showChildren = !this.showChildren;
     },
   },
 };
