@@ -1,8 +1,14 @@
 <template>
-  <div class="tree-menu">
-    <div :style="indent" v-on:click="toggleChildren" :class="type">
-      <span v-html="emoji[type]"> </span> 
-      <span> {{ name }} </span>
+  <div class="build-tree">
+    <div :style="dash" v-on:click="toggleChildren" :class="type">
+      <span
+        v-on:click="toggleBackground"
+        class="item"
+        v-bind:class="showBackground ? activeBg : ''"
+      >
+        <span v-html="emoji[type]"> </span>
+        <span> {{ name }} </span>
+      </span>
 
       <div v-if="showChildren">
         <MakeLeaf
@@ -23,46 +29,58 @@ export default {
   props: ["name", "contents", "depth", "type"],
   name: "MakeLeaf",
   computed: {
-    indent() {
+    dash() {
       return { transform: `translate(${this.depth * 10}px)` };
     },
   },
   data() {
-    return { 
+    return {
       showChildren: false,
+      showBackground: false,
+      activeBg: "activebg",
       emoji: {
         directory: "&#128193;",
         file: "&#128196;",
-        link: "	&#128279;"
-      } 
-      
-    }    
+        link: "&#128279;",
+      },
+    };
   },
   methods: {
     toggleChildren(e) {
       e.stopPropagation();
       this.showChildren = !this.showChildren;
     },
+    toggleBackground() {
+      if (this.type === "directory") return;
+      this.showBackground = !this.showBackground;
+    },
   },
 };
 </script>
 
- <style scoped>
+<style scoped>
+.build-tree {
+  margin: 5px 0;
+  user-select: none;
+}
 
- .tree-menu {
-   margin: 5px  0
- }
+.item {
+  cursor: pointer;
+}
 
- .directory {
-   color:grey
- }
+.activebg {
+  background-color: lightcyan;
+}
 
- .file {
-   color:black
- }
+.directory {
+  color: grey;
+}
 
- .link {
-   color:blue
- }
- 
- </style>
+.file {
+  color: black;
+}
+
+.link {
+  color: blue;
+}
+</style>

@@ -27,11 +27,6 @@
 </script>
 
 <style>
-  #app {
-
-    
-  }
-
   body {
     font-family: "Open Sans", sans-serif;
     font-size: 18px;
