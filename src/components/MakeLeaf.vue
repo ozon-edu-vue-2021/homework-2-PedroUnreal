@@ -5,9 +5,15 @@
         v-on:click="toggleBackground"
         class="item"
         v-bind:class="showBackground ? activeBg : ''"
+        v-on:keydown="keydown"
+        tabindex="0"
+        ref="elem"
       >
+        <!-- v-on:focus="toggleChildren"  -->
         <span v-html="emoji[type]"> </span>
-        <span> {{ name }} </span>
+        <span>
+          {{ name }} {{depth}}
+        </span>
       </span>
 
       <div v-if="showChildren">
@@ -28,6 +34,21 @@
 export default {
   props: ["name", "contents", "depth", "type"],
   name: "MakeLeaf",
+  mounted: function () {
+    window.addEventListener(
+      "keydown",
+      function (e) {
+        if (
+          ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(
+            e.code
+          ) > -1
+        ) {
+          e.preventDefault();
+        }
+      },
+      false
+    );
+  },
   computed: {
     dash() {
       return { transform: `translate(${this.depth * 10}px)` };
@@ -38,6 +59,7 @@ export default {
       showChildren: false,
       showBackground: false,
       activeBg: "activebg",
+      activeFile: "activeFile",
       emoji: {
         directory: "&#128193;",
         file: "&#128196;",
@@ -54,6 +76,23 @@ export default {
       if (this.type === "directory") return;
       this.showBackground = !this.showBackground;
     },
+    keydown(event) {
+      if (event.code == "ArrowRight") {
+        event.preventDefault();
+        //event.target.focus();
+        this.showChildren = true;
+        // console.log(event.target);
+        // //this.$ref.elem.focus();
+        //  this.$nextTick(() => {
+        // this.$refs.elem.focus();})
+      }
+
+      if (event.code == "ArrowDown") {
+        event.preventDefault();
+        this.$children[0].$refs.elem.focus()
+        //this.$refs.elem.focus();
+      }
+    },
   },
 };
 </script>
@@ -68,8 +107,17 @@ export default {
   cursor: pointer;
 }
 
+.item:focus {
+  border: 5px solid red;
+}
+
 .activebg {
   background-color: lightcyan;
+}
+
+.activeFile {
+  background-color: blueviolet;
+  border: crimson solid 2px;
 }
 
 .directory {
