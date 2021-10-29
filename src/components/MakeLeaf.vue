@@ -1,6 +1,9 @@
 <template>
   <div class="build-tree">
-    <div :style="dash" v-on:click="toggleChildren" :class="type">
+    <div 
+    :style="dash" 
+    v-on:click="toggleChildren"
+    :class="type" >
       <span
         v-on:click="toggleBackground"
         class="item"
@@ -8,47 +11,35 @@
         v-on:keydown="keydown"
         tabindex="0"
         ref="elem"
+        autofocus
       >
-        <!-- v-on:focus="toggleChildren"  -->
+        <!-- v-on:click="$emit('print-path', path)"  -->
         <span v-html="emoji[type]"> </span>
-        <span>
-          {{ name }} {{depth}}
-        </span>
+        <span> {{ name }}/</span>
       </span>
+      </div>
 
       <div v-if="showChildren">
         <MakeLeaf
-          v-for="content in contents"
+          v-for="(content, index) in contents"
           :contents="content.contents"
           :name="content.name"
           :key="content.name"
           :depth="depth + 1"
           :type="content.type"
+          :index="index"
+          :path="path+'/'+name"
+          :setPath="setPath"
         >
         </MakeLeaf>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
 export default {
-  props: ["name", "contents", "depth", "type"],
+  props: ["name", "contents", "depth", "type", "index", "path", "setPath"],
   name: "MakeLeaf",
-  mounted: function () {
-    window.addEventListener(
-      "keydown",
-      function (e) {
-        if (
-          ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(
-            e.code
-          ) > -1
-        ) {
-          e.preventDefault();
-        }
-      },
-      false
-    );
-  },
   computed: {
     dash() {
       return { transform: `translate(${this.depth * 10}px)` };
@@ -73,24 +64,58 @@ export default {
       this.showChildren = !this.showChildren;
     },
     toggleBackground() {
+      // this.$parent.$emit('print-path', this.path);
+      this.setPath(this.path);
       if (this.type === "directory") return;
       this.showBackground = !this.showBackground;
     },
     keydown(event) {
-      if (event.code == "ArrowRight") {
+      if (event.code === ('ArrowRight' )) {
         event.preventDefault();
-        //event.target.focus();
         this.showChildren = true;
-        // console.log(event.target);
-        // //this.$ref.elem.focus();
-        //  this.$nextTick(() => {
-        // this.$refs.elem.focus();})
+        this.setPath(this.path);
+        this.$nextTick(() => {
+          if (this.$children[0]) {
+            this.$children[0].$refs.elem.focus();
+          }
+        });
+      }
+
+      if (event.code === ('Enter')) {
+        event.preventDefault();
+        this.setPath(this.path);
+        this.showChildren = true;
+        this.$nextTick(() => {
+          if (this.$children[0]) {
+            this.$children[0].$refs.elem.focus();
+          }
+        });
+      }
+
+      if (event.code == "ArrowLeft") {
+        event.preventDefault();
+        this.setPath(this.path);
+        this.showChildren = false;
+        this.$parent.showChildren = false;
+        if (this.$parent.$refs.elem) {
+          this.$parent.$refs.elem.focus();
+        }
       }
 
       if (event.code == "ArrowDown") {
         event.preventDefault();
-        this.$children[0].$refs.elem.focus()
-        //this.$refs.elem.focus();
+        this.setPath(this.path);
+        if (this.$parent.$children[this.index + 1]) {
+          this.$parent.$children[this.index + 1].$refs.elem.focus();
+        }
+      }
+
+      if (event.code == "ArrowUp") {
+        event.preventDefault();
+        this.setPath(this.path);
+        if (this.$parent.$children[this.index - 1]) {
+          this.$parent.$children[this.index - 1].$refs.elem.focus();
+        }
       }
     },
   },
@@ -105,10 +130,6 @@ export default {
 
 .item {
   cursor: pointer;
-}
-
-.item:focus {
-  border: 5px solid red;
 }
 
 .activebg {
