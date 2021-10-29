@@ -5,7 +5,7 @@
     v-on:click="toggleChildren"
     :class="type" >
       <span
-        v-on:click="toggleBackground"
+        v-on:focus="toggleBackground"
         class="item"
         v-bind:class="showBackground ? activeBg : ''"
         v-on:keydown="keydown"
@@ -13,9 +13,8 @@
         ref="elem"
         autofocus
       >
-        <!-- v-on:click="$emit('print-path', path)"  -->
         <span v-html="emoji[type]"> </span>
-        <span> {{ name }}/</span>
+        <span> {{ name }}</span>
       </span>
       </div>
 
@@ -65,7 +64,7 @@ export default {
     },
     toggleBackground() {
       // this.$parent.$emit('print-path', this.path);
-      this.setPath(this.path);
+      this.setPath(this.path + '/' + this.name);
       if (this.type === "directory") return;
       this.showBackground = !this.showBackground;
     },
@@ -73,7 +72,7 @@ export default {
       if (event.code === ('ArrowRight' )) {
         event.preventDefault();
         this.showChildren = true;
-        this.setPath(this.path);
+        this.setPath(this.path + '/' + this.name);
         this.$nextTick(() => {
           if (this.$children[0]) {
             this.$children[0].$refs.elem.focus();
@@ -83,7 +82,7 @@ export default {
 
       if (event.code === ('Enter')) {
         event.preventDefault();
-        this.setPath(this.path);
+        this.setPath(this.path + '/' + this.name);
         this.showChildren = true;
         this.$nextTick(() => {
           if (this.$children[0]) {
@@ -94,7 +93,7 @@ export default {
 
       if (event.code == "ArrowLeft") {
         event.preventDefault();
-        this.setPath(this.path);
+        this.setPath(this.path + '/' + this.name);
         this.showChildren = false;
         this.$parent.showChildren = false;
         if (this.$parent.$refs.elem) {
@@ -104,7 +103,7 @@ export default {
 
       if (event.code == "ArrowDown") {
         event.preventDefault();
-        this.setPath(this.path);
+        this.setPath(this.path + '/' + this.name);
         if (this.$parent.$children[this.index + 1]) {
           this.$parent.$children[this.index + 1].$refs.elem.focus();
         }
@@ -112,7 +111,7 @@ export default {
 
       if (event.code == "ArrowUp") {
         event.preventDefault();
-        this.setPath(this.path);
+        this.setPath(this.path + '/' + this.name);
         if (this.$parent.$children[this.index - 1]) {
           this.$parent.$children[this.index - 1].$refs.elem.focus();
         }

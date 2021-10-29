@@ -1,15 +1,17 @@
 <template>
   <div id="app" v-on:print-path="onPathChange">
-    <span class="path">{{ globalPath }}</span>
-    <MakeLeaf
-      :name="this.json.name"
-      :contents="this.json.contents"
-      :depth="0"
-      :type="this.json.type"
-      :path="''"
-      :setPath="onPathChange"
-    >
-    </MakeLeaf>
+    <div class="path">{{ globalPath }}</div>
+    <div class="wrapper">
+      <MakeLeaf
+        :name="this.json.name"
+        :contents="this.json.contents"
+        :depth="0"
+        :type="this.json.type"
+        :path="''"
+        :setPath="onPathChange"
+      >
+      </MakeLeaf>
+    </div>
   </div>
 </template>
 
@@ -25,7 +27,7 @@ export default {
   data() {
     return {
       json: tree,
-      globalPath: 0,
+      globalPath: "",
     };
   },
   methods: {
@@ -42,24 +44,24 @@ export default {
   margin-top: 50px;
 }
 .path {
-position: fixed;
-top: 10px;
-background-color: white;
-z-index: 10;
-border: solid red 1px;
-padding: 5px;
-}  
-
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+  z-index: 10;
+  border: solid red 1px;
+  padding: 10px 8px;
+}
 
 body {
+  margin: 0;
   font-family: "Open Sans", sans-serif;
   font-size: 18px;
   font-weight: 300;
   line-height: 1em;
 }
 
-.container {
-  width: 300px;
-  margin: 0 auto;
+.wrapper {
+  margin-left: 8px;
 }
 </style>
